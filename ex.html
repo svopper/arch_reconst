@@ -1,0 +1,204 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 1600;
+            height: 900;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 1600;
+            height: 900;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"id": "buffalo", "label": "buffalo", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/internal/httpx", "label": "github.com/gobuffalo/buffalo/internal/httpx", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx", "label": "github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/servers", "label": "github.com/gobuffalo/buffalo/servers", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/events", "label": "github.com/gobuffalo/events", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/packd", "label": "github.com/gobuffalo/packd", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/envy", "label": "github.com/gobuffalo/envy", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/flect/name", "label": "github.com/gobuffalo/flect/name", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/binding", "label": "github.com/gobuffalo/buffalo/binding", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/render", "label": "github.com/gobuffalo/buffalo/render", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/plugins", "label": "github.com/gobuffalo/buffalo/plugins", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/internal/defaults", "label": "github.com/gobuffalo/buffalo/internal/defaults", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/worker", "label": "github.com/gobuffalo/buffalo/worker", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/logger", "label": "github.com/gobuffalo/logger", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/pop/v5", "label": "github.com/gobuffalo/pop/v5", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/pop/v5/logging", "label": "github.com/gobuffalo/pop/v5/logging", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/flect", "label": "github.com/gobuffalo/flect", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/runtime", "label": "github.com/gobuffalo/buffalo/runtime", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/plush/v4", "label": "github.com/gobuffalo/plush/v4", "shape": "dot", "size": 10}, {"id": "binding", "label": "binding", "shape": "dot", "size": 10}, {"id": "plugins", "label": "plugins", "shape": "dot", "size": 10}, {"id": "render", "label": "render", "shape": "dot", "size": 10}, {"id": "cmd", "label": "cmd", "shape": "dot", "size": 10}, {"id": "fix", "label": "fix", "shape": "dot", "size": 10}, {"id": "install", "label": "install", "shape": "dot", "size": 10}, {"id": "add", "label": "add", "shape": "dot", "size": 10}, {"id": "core", "label": "core", "shape": "dot", "size": 10}, {"id": "plugcmds", "label": "plugcmds", "shape": "dot", "size": 10}, {"id": "build", "label": "build", "shape": "dot", "size": 10}, {"id": "info", "label": "info", "shape": "dot", "size": 10}, {"id": "resource", "label": "resource", "shape": "dot", "size": 10}, {"id": "models", "label": "models", "shape": "dot", "size": 10}, {"id": "actions", "label": "actions", "shape": "dot", "size": 10}, {"id": "generate", "label": "generate", "shape": "dot", "size": 10}, {"id": "mail", "label": "mail", "shape": "dot", "size": 10}, {"id": "grift", "label": "grift", "shape": "dot", "size": 10}, {"id": "cache", "label": "cache", "shape": "dot", "size": 10}, {"id": "httpx", "label": "httpx", "shape": "dot", "size": 10}, {"id": "ci", "label": "ci", "shape": "dot", "size": 10}, {"id": "destroy", "label": "destroy", "shape": "dot", "size": 10}, {"id": "docker", "label": "docker", "shape": "dot", "size": 10}, {"id": "refresh", "label": "refresh", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/plugins/plugdeps", "label": "github.com/gobuffalo/buffalo/plugins/plugdeps", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/meta", "label": "github.com/gobuffalo/meta", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/genny/v2", "label": "github.com/gobuffalo/genny/v2", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/add", "label": "github.com/gobuffalo/buffalo/genny/add", "shape": "dot", "size": 10}, {"id": "pluginsin github.com/gobuffalo/buffalo/plugins", "label": "pluginsin github.com/gobuffalo/buffalo/plugins", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/buffalo/cmd/plugins/internal/cache", "label": "github.com/gobuffalo/buffalo/buffalo/cmd/plugins/internal/cache", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/plugins/plugcmds", "label": "github.com/gobuffalo/buffalo/plugins/plugcmds", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/plugins/install", "label": "github.com/gobuffalo/buffalo/genny/plugins/install", "shape": "dot", "size": 10}, {"id": "plugdeps", "label": "plugdeps", "shape": "dot", "size": 10}, {"id": "vcs", "label": "vcs", "shape": "dot", "size": 10}, {"id": "webpack", "label": "webpack", "shape": "dot", "size": 10}, {"id": "packrd", "label": "packrd", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/packr/v2", "label": "github.com/gobuffalo/packr/v2", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/packr/v2/file/resolver", "label": "github.com/gobuffalo/packr/v2/file/resolver", "shape": "dot", "size": 10}, {"id": "standard", "label": "standard", "shape": "dot", "size": 10}, {"id": "web", "label": "web", "shape": "dot", "size": 10}, {"id": "api", "label": "api", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo", "label": "github.com/gobuffalo/buffalo", "shape": "dot", "size": 10}, {"id": "gomail github.com/gobuffalo/buffalo/mail/internal/mail", "label": "gomail github.com/gobuffalo/buffalo/mail/internal/mail", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/genny/v2/gogen", "label": "github.com/gobuffalo/genny/v2/gogen", "shape": "dot", "size": 10}, {"id": "grifts", "label": "grifts", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/helpers", "label": "github.com/gobuffalo/helpers", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/helpers/forms", "label": "github.com/gobuffalo/helpers/forms", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/helpers/forms/bootstrap", "label": "github.com/gobuffalo/helpers/forms/bootstrap", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/helpers/hctx", "label": "github.com/gobuffalo/helpers/hctx", "shape": "dot", "size": 10}, {"id": "ht github.com/gobuffalo/helpers/tags", "label": "ht github.com/gobuffalo/helpers/tags", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/tags/v3", "label": "github.com/gobuffalo/tags/v3", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/github_flavored_markdown", "label": "github.com/gobuffalo/github_flavored_markdown", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/internal/takeon/github.com/gobuffalo/syncx", "label": "github.com/gobuffalo/buffalo/internal/takeon/github.com/gobuffalo/syncx", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/binding/decoders", "label": "github.com/gobuffalo/buffalo/binding/decoders", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/nulls", "label": "github.com/gobuffalo/nulls", "shape": "dot", "size": 10}, {"id": "decoders", "label": "decoders", "shape": "dot", "size": 10}, {"id": "main", "label": "main", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/buffalo/cmd", "label": "github.com/gobuffalo/buffalo/buffalo/cmd", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/buffalo/cmd/generate", "label": "github.com/gobuffalo/buffalo/buffalo/cmd/generate", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/buffalo/cmd/destroy", "label": "github.com/gobuffalo/buffalo/buffalo/cmd/destroy", "shape": "dot", "size": 10}, {"id": "pluginscmd github.com/gobuffalo/buffalo/buffalo/cmd/plugins", "label": "pluginscmd github.com/gobuffalo/buffalo/buffalo/cmd/plugins", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/build", "label": "github.com/gobuffalo/buffalo/genny/build", "shape": "dot", "size": 10}, {"id": "pop github.com/gobuffalo/buffalo-pop/v2/genny/newapp", "label": "pop github.com/gobuffalo/buffalo-pop/v2/genny/newapp", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/assets/standard", "label": "github.com/gobuffalo/buffalo/genny/assets/standard", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/assets/webpack", "label": "github.com/gobuffalo/buffalo/genny/assets/webpack", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/ci", "label": "github.com/gobuffalo/buffalo/genny/ci", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/docker", "label": "github.com/gobuffalo/buffalo/genny/docker", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/newapp/api", "label": "github.com/gobuffalo/buffalo/genny/newapp/api", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/newapp/core", "label": "github.com/gobuffalo/buffalo/genny/newapp/core", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/newapp/web", "label": "github.com/gobuffalo/buffalo/genny/newapp/web", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/refresh", "label": "github.com/gobuffalo/buffalo/genny/refresh", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/vcs", "label": "github.com/gobuffalo/buffalo/genny/vcs", "shape": "dot", "size": 10}, {"id": "fname github.com/gobuffalo/flect/name", "label": "fname github.com/gobuffalo/flect/name", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/packr/v2/plog", "label": "github.com/gobuffalo/packr/v2/plog", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/buffalo/cmd/fix", "label": "github.com/gobuffalo/buffalo/buffalo/cmd/fix", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/info", "label": "github.com/gobuffalo/buffalo/genny/info", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/clara/v2/genny/rx", "label": "github.com/gobuffalo/clara/v2/genny/rx", "shape": "dot", "size": 10}, {"id": "rg github.com/gobuffalo/buffalo/genny/refresh", "label": "rg github.com/gobuffalo/buffalo/genny/refresh", "shape": "dot", "size": 10}, {"id": "cmdPlugins github.com/gobuffalo/buffalo/buffalo/cmd/plugins", "label": "cmdPlugins github.com/gobuffalo/buffalo/buffalo/cmd/plugins", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/packr/v2/packr2/cmd/fix", "label": "github.com/gobuffalo/packr/v2/packr2/cmd/fix", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/grift", "label": "github.com/gobuffalo/buffalo/genny/grift", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/actions", "label": "github.com/gobuffalo/buffalo/genny/actions", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/attrs", "label": "github.com/gobuffalo/attrs", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/resource", "label": "github.com/gobuffalo/buffalo/genny/resource", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo/genny/mail", "label": "github.com/gobuffalo/buffalo/genny/mail", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/genny/v2/plushgen", "label": "github.com/gobuffalo/genny/v2/plushgen", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo-pop/v2/pop/popmw", "label": "github.com/gobuffalo/buffalo-pop/v2/pop/popmw", "shape": "dot", "size": 10}, {"id": "csrf github.com/gobuffalo/mw-csrf", "label": "csrf github.com/gobuffalo/mw-csrf", "shape": "dot", "size": 10}, {"id": "forcessl github.com/gobuffalo/mw-forcessl", "label": "forcessl github.com/gobuffalo/mw-forcessl", "shape": "dot", "size": 10}, {"id": "i18n github.com/gobuffalo/mw-i18n", "label": "i18n github.com/gobuffalo/mw-i18n", "shape": "dot", "size": 10}, {"id": "paramlogger github.com/gobuffalo/mw-paramlogger", "label": "paramlogger github.com/gobuffalo/mw-paramlogger", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/packr/v2/jam", "label": "github.com/gobuffalo/packr/v2/jam", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/packr/v2/jam/parser", "label": "github.com/gobuffalo/packr/v2/jam/parser", "shape": "dot", "size": 10}, {"id": "github.com/gobuffalo/buffalo-pop/v2/genny/newapp", "label": "github.com/gobuffalo/buffalo-pop/v2/genny/newapp", "shape": "dot", "size": 10}, {"id": "runtime", "label": "runtime", "shape": "dot", "size": 10}, {"id": "fakesmtp", "label": "fakesmtp", "shape": "dot", "size": 10}, {"id": "defaults", "label": "defaults", "shape": "dot", "size": 10}, {"id": "syncx", "label": "syncx", "shape": "dot", "size": 10}, {"id": "errx", "label": "errx", "shape": "dot", "size": 10}, {"id": "worker", "label": "worker", "shape": "dot", "size": 10}, {"id": "servers", "label": "servers", "shape": "dot", "size": 10}]);
+        edges = new vis.DataSet([{"from": "buffalo", "to": "github.com/gobuffalo/buffalo/internal/httpx", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/buffalo/servers", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/events", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/packd", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/envy", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/flect/name", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/buffalo/binding", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/buffalo/render", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/buffalo/plugins", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/buffalo/internal/defaults", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/buffalo/worker", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/logger", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/pop/v5", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/pop/v5/logging", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/flect", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/buffalo/runtime", "weight": 1}, {"from": "buffalo", "to": "github.com/gobuffalo/plush/v4", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/internal/httpx", "to": "binding", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx", "to": "plugins", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx", "to": "render", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx", "to": "cmd", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx", "to": "fix", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx", "to": "install", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx", "to": "add", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/internal/takeon/github.com/markbates/errx", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/events", "to": "plugcmds", "weight": 1}, {"from": "github.com/gobuffalo/events", "to": "cmd", "weight": 1}, {"from": "github.com/gobuffalo/events", "to": "plugins", "weight": 1}, {"from": "github.com/gobuffalo/events", "to": "build", "weight": 1}, {"from": "github.com/gobuffalo/packd", "to": "render", "weight": 1}, {"from": "github.com/gobuffalo/packd", "to": "info", "weight": 1}, {"from": "github.com/gobuffalo/packd", "to": "build", "weight": 1}, {"from": "github.com/gobuffalo/packd", "to": "resource", "weight": 1}, {"from": "github.com/gobuffalo/envy", "to": "plugins", "weight": 1}, {"from": "github.com/gobuffalo/envy", "to": "cmd", "weight": 1}, {"from": "github.com/gobuffalo/envy", "to": "build", "weight": 1}, {"from": "github.com/gobuffalo/envy", "to": "models", "weight": 1}, {"from": "github.com/gobuffalo/envy", "to": "actions", "weight": 1}, {"from": "github.com/gobuffalo/flect/name", "to": "render", "weight": 1}, {"from": "github.com/gobuffalo/flect/name", "to": "generate", "weight": 1}, {"from": "github.com/gobuffalo/flect/name", "to": "mail", "weight": 1}, {"from": "github.com/gobuffalo/flect/name", "to": "grift", "weight": 1}, {"from": "github.com/gobuffalo/flect/name", "to": "actions", "weight": 1}, {"from": "github.com/gobuffalo/flect/name", "to": "resource", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/render", "to": "mail", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/render", "to": "actions", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/plugins", "to": "plugcmds", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/plugins", "to": "cmd", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/plugins", "to": "plugins", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/plugins", "to": "cache", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/plugins", "to": "fix", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/internal/defaults", "to": "httpx", "weight": 1}, {"from": "github.com/gobuffalo/logger", "to": "cmd", "weight": 1}, {"from": "github.com/gobuffalo/logger", "to": "plugins", "weight": 1}, {"from": "github.com/gobuffalo/logger", "to": "generate", "weight": 1}, {"from": "github.com/gobuffalo/pop/v5", "to": "cmd", "weight": 1}, {"from": "github.com/gobuffalo/pop/v5", "to": "ci", "weight": 1}, {"from": "github.com/gobuffalo/pop/v5", "to": "models", "weight": 1}, {"from": "github.com/gobuffalo/flect", "to": "destroy", "weight": 1}, {"from": "github.com/gobuffalo/flect", "to": "resource", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/runtime", "to": "cmd", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/runtime", "to": "fix", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/runtime", "to": "docker", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/runtime", "to": "ci", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/runtime", "to": "build", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/runtime", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/plush/v4", "to": "render", "weight": 1}, {"from": "github.com/gobuffalo/plush/v4", "to": "cmd", "weight": 1}, {"from": "github.com/gobuffalo/plush/v4", "to": "refresh", "weight": 1}, {"from": "github.com/gobuffalo/plush/v4", "to": "build", "weight": 1}, {"from": "plugins", "to": "github.com/gobuffalo/buffalo/plugins/plugdeps", "weight": 1}, {"from": "plugins", "to": "github.com/gobuffalo/meta", "weight": 1}, {"from": "plugins", "to": "github.com/gobuffalo/genny/v2", "weight": 1}, {"from": "plugins", "to": "github.com/gobuffalo/buffalo/genny/add", "weight": 1}, {"from": "plugins", "to": "pluginsin github.com/gobuffalo/buffalo/plugins", "weight": 1}, {"from": "plugins", "to": "github.com/gobuffalo/buffalo/buffalo/cmd/plugins/internal/cache", "weight": 1}, {"from": "plugins", "to": "github.com/gobuffalo/buffalo/plugins/plugcmds", "weight": 1}, {"from": "plugins", "to": "github.com/gobuffalo/buffalo/genny/plugins/install", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/plugins/plugdeps", "to": "fix", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/plugins/plugdeps", "to": "install", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/plugins/plugdeps", "to": "add", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/plugins/plugdeps", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "plugdeps", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "cmd", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "fix", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "generate", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "docker", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "install", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "refresh", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "mail", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "ci", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "info", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "add", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "vcs", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "actions", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "build", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "resource", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "webpack", "weight": 1}, {"from": "github.com/gobuffalo/meta", "to": "core", "weight": 1}, {"from": "packrd", "to": "github.com/gobuffalo/packr/v2", "weight": 1}, {"from": "packrd", "to": "github.com/gobuffalo/packr/v2/file/resolver", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "docker", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "refresh", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "mail", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "ci", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "info", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "vcs", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "actions", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "build", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "resource", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "standard", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "webpack", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "web", "weight": 1}, {"from": "github.com/gobuffalo/packr/v2", "to": "api", "weight": 1}, {"from": "mail", "to": "github.com/gobuffalo/buffalo", "weight": 1}, {"from": "mail", "to": "gomail github.com/gobuffalo/buffalo/mail/internal/mail", "weight": 1}, {"from": "mail", "to": "github.com/gobuffalo/genny/v2", "weight": 1}, {"from": "mail", "to": "github.com/gobuffalo/genny/v2/gogen", "weight": 1}, {"from": "github.com/gobuffalo/buffalo", "to": "cmd", "weight": 1}, {"from": "github.com/gobuffalo/buffalo", "to": "actions", "weight": 1}, {"from": "github.com/gobuffalo/buffalo", "to": "grifts", "weight": 1}, {"from": "render", "to": "github.com/gobuffalo/helpers", "weight": 1}, {"from": "render", "to": "github.com/gobuffalo/helpers/forms", "weight": 1}, {"from": "render", "to": "github.com/gobuffalo/helpers/forms/bootstrap", "weight": 1}, {"from": "render", "to": "github.com/gobuffalo/helpers/hctx", "weight": 1}, {"from": "render", "to": "ht github.com/gobuffalo/helpers/tags", "weight": 1}, {"from": "render", "to": "github.com/gobuffalo/tags/v3", "weight": 1}, {"from": "render", "to": "github.com/gobuffalo/github_flavored_markdown", "weight": 1}, {"from": "render", "to": "github.com/gobuffalo/buffalo/internal/takeon/github.com/gobuffalo/syncx", "weight": 1}, {"from": "binding", "to": "github.com/gobuffalo/buffalo/binding/decoders", "weight": 1}, {"from": "binding", "to": "github.com/gobuffalo/nulls", "weight": 1}, {"from": "github.com/gobuffalo/nulls", "to": "decoders", "weight": 1}, {"from": "main", "to": "github.com/gobuffalo/buffalo/buffalo/cmd", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/buffalo/cmd/generate", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/buffalo/cmd/destroy", "weight": 1}, {"from": "cmd", "to": "pluginscmd github.com/gobuffalo/buffalo/buffalo/cmd/plugins", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/build", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/genny/v2", "weight": 1}, {"from": "cmd", "to": "pop github.com/gobuffalo/buffalo-pop/v2/genny/newapp", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/assets/standard", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/assets/webpack", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/ci", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/docker", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/newapp/api", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/newapp/core", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/newapp/web", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/refresh", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/vcs", "weight": 1}, {"from": "cmd", "to": "fname github.com/gobuffalo/flect/name", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/genny/v2/gogen", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/packr/v2/plog", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/buffalo/cmd/fix", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/buffalo/genny/info", "weight": 1}, {"from": "cmd", "to": "github.com/gobuffalo/clara/v2/genny/rx", "weight": 1}, {"from": "cmd", "to": "rg github.com/gobuffalo/buffalo/genny/refresh", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "fix", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "generate", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "docker", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "install", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "refresh", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "ci", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "info", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "grift", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "add", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "vcs", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "actions", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "build", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "resource", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "standard", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "webpack", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "web", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2", "to": "api", "weight": 1}, {"from": "pop github.com/gobuffalo/buffalo-pop/v2/genny/newapp", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/assets/standard", "to": "web", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/assets/webpack", "to": "fix", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/assets/webpack", "to": "build", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/assets/webpack", "to": "web", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/ci", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/docker", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/newapp/core", "to": "web", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/newapp/core", "to": "api", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/refresh", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/vcs", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "generate", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "docker", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "ci", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "grift", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "actions", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "resource", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "standard", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "webpack", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "core", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "web", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/gogen", "to": "api", "weight": 1}, {"from": "github.com/gobuffalo/clara/v2/genny/rx", "to": "info", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/add", "to": "install", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/plugins/install", "to": "fix", "weight": 1}, {"from": "github.com/gobuffalo/buffalo/genny/plugins/install", "to": "core", "weight": 1}, {"from": "fix", "to": "cmdPlugins github.com/gobuffalo/buffalo/buffalo/cmd/plugins", "weight": 1}, {"from": "fix", "to": "github.com/gobuffalo/packr/v2/packr2/cmd/fix", "weight": 1}, {"from": "generate", "to": "github.com/gobuffalo/buffalo/genny/grift", "weight": 1}, {"from": "generate", "to": "github.com/gobuffalo/buffalo/genny/actions", "weight": 1}, {"from": "generate", "to": "github.com/gobuffalo/attrs", "weight": 1}, {"from": "generate", "to": "github.com/gobuffalo/buffalo/genny/resource", "weight": 1}, {"from": "generate", "to": "github.com/gobuffalo/buffalo/genny/mail", "weight": 1}, {"from": "github.com/gobuffalo/attrs", "to": "resource", "weight": 1}, {"from": "refresh", "to": "github.com/gobuffalo/genny/v2/plushgen", "weight": 1}, {"from": "github.com/gobuffalo/genny/v2/plushgen", "to": "build", "weight": 1}, {"from": "actions", "to": "github.com/gobuffalo/buffalo-pop/v2/pop/popmw", "weight": 1}, {"from": "actions", "to": "csrf github.com/gobuffalo/mw-csrf", "weight": 1}, {"from": "actions", "to": "forcessl github.com/gobuffalo/mw-forcessl", "weight": 1}, {"from": "actions", "to": "i18n github.com/gobuffalo/mw-i18n", "weight": 1}, {"from": "actions", "to": "paramlogger github.com/gobuffalo/mw-paramlogger", "weight": 1}, {"from": "build", "to": "github.com/gobuffalo/packr/v2/jam", "weight": 1}, {"from": "build", "to": "github.com/gobuffalo/packr/v2/jam/parser", "weight": 1}, {"from": "core", "to": "github.com/gobuffalo/buffalo-pop/v2/genny/newapp", "weight": 1}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
