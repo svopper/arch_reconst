@@ -31,16 +31,21 @@ for file in gofiles:
     endIdx = -1
     for idx, line in enumerate(fileContent):
         if line.startswith('package'):
+            # get package/module name
             package = line.split()[1]
             if not G.has_node(package):
+                # add package as node to graph
                 G.add_node(package)
         if line.startswith('import'):
             if "(" not in line:
+                # extract single line import
                 imports.append(trim(line.split()[1].split('/')[-1]))
                 break
+            # start line num of multiline import
             startIdx = idx
             continue
         if line.startswith(')'):
+            # end line num of multiline import
             endIdx = idx
             break
 
