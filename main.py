@@ -13,7 +13,7 @@ def trim(str):
 
 G = nx.DiGraph()
 
-rootdir = '/Users/kalle/src/buffalo'
+rootdir = '/Users/kalle/src/devops-21'
 gofiles = []
 for root, subdirs, files in os.walk(rootdir):
     for file in files:
@@ -53,15 +53,14 @@ for file in gofiles:
         imports = list(map(trim, fileContent[startIdx+1:endIdx]))
 
     for i in imports:
-        if '/buffalo/' in i:
-            pck = i.split('/')[-1]
-            if not G.has_node(pck):
-                G.add_node(pck)
-            G.add_edge(package, pck)
+        # if '/devops-21/' in i:
+        pck = i.split('/')[-1]
+        if not G.has_node(pck):
+            G.add_node(pck)
+        G.add_edge(package, pck)
 
 
 nx.draw_networkx(G, with_labels=True, node_size=100)
-g = Network(height='100%', width='100%', bgcolor='#222222',
-            font_color='white', directed=True)
+g = Network(height='100%', width='100%', directed=True)
 g.from_nx(G)
 g.show("reconstruction.html")
